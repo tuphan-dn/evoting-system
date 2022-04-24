@@ -1,0 +1,14 @@
+[features]
+seeds = false
+[programs.localnet]
+l6 = "B3kBLn9XGtYntM2s1bNg3V7HK6JngyHcds33wvdSMwNj"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "localnet"
+wallet = "/Users/tuphan/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
