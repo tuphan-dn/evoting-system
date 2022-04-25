@@ -1,11 +1,11 @@
-import { Card, Col, Row } from "antd";
-import { useSelector } from "react-redux";
-import { AppState } from "../store";
+import { Card, Col, Row } from 'antd'
+import { useSelector } from 'react-redux'
+import { AppState } from '../store'
 
 const WalletInfo = () => {
   const {
-    wallet: { walletAddress, balance }
-  } = useSelector((state: AppState) => state);
+    wallet: { walletAddress, balance },
+  } = useSelector((state: AppState) => state)
   return (
     <Card title="Wallet Info">
       <Row gutter={[24, 24]}>
@@ -25,7 +25,7 @@ const WalletInfo = () => {
         </Col>
       </Row>
     </Card>
-  );
-};
+  )
+}
 
-export default WalletInfo;
+export default WalletInfo

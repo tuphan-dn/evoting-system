@@ -1,5 +1,5 @@
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
-import React from 'react'
+import VoteBtn from './voteBtn'
 
 const CandidateDetail = () => {
   return (
@@ -29,8 +29,10 @@ const CandidateDetail = () => {
             </Col>
             <Col>
               <Space>
-                <Button type="primary">Vote</Button>
-                <Button type="primary">Close</Button>
+                <VoteBtn />
+                <Button type="primary" style={{ borderRadius: 40 }}>
+                  Close
+                </Button>
               </Space>
             </Col>
           </Row>

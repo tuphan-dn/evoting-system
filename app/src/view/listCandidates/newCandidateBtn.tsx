@@ -3,6 +3,7 @@ import {
   Card,
   Col,
   DatePicker,
+  Form,
   Modal,
   Row,
   Space,
@@ -14,34 +15,31 @@ import moment from 'moment'
 
 const dateFormat = 'DD/MM/YYYY'
 
-const ModalContent = (): JSX.Element => {
-  const [visible, setVisible] = useState(false)
+const ModalContent = () => {
   return (
-    <Row gutter={[24, 24]}>
-      <Col span={24}>
-        <Space align="baseline">
-          <Typography.Text>Start date:</Typography.Text>
-          <DatePicker
-            defaultValue={moment('2015/01/01', dateFormat)}
-            format={dateFormat}
-          />
-        </Space>
-      </Col>
-      <Col span={24}>
-        <Space align="baseline">
-          <Typography.Text>End date:</Typography.Text>
-          <DatePicker
-            defaultValue={moment('2015/01/01', dateFormat)}
-            format={dateFormat}
-          />
-        </Space>
-      </Col>
-    </Row>
+    <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+      <Form.Item label="Start Date">
+        <DatePicker style={{ width: '80%' }} format={dateFormat} />
+      </Form.Item>
+
+      <Form.Item label="End Date">
+        <DatePicker style={{ width: '80%' }} format={dateFormat} />
+      </Form.Item>
+
+      <Form.Item>
+        <Col style={{ textAlign: 'right' }}>
+          <Button type="primary">Create Candidate</Button>
+        </Col>
+      </Form.Item>
+    </Form>
   )
 }
 
 const NewCandidateBtn = () => {
   const [visible, setVisible] = useState(false)
+  const [dateStart, setDateStart] = useState('')
+  const [dateEnd, setDateEnd] = useState('')
+
   return (
     <Fragment>
       <Button
@@ -53,7 +51,7 @@ const NewCandidateBtn = () => {
         New candidate
       </Button>
       <Modal
-        title={<Typography.Title level={4}>New Pool</Typography.Title>}
+        title={<Typography.Title level={4}>New Candidate</Typography.Title>}
         visible={visible}
         onCancel={() => {
           setVisible(false)
@@ -61,8 +59,6 @@ const NewCandidateBtn = () => {
         footer={null}
         destroyOnClose={true}
         centered={true}
-        width={572}
-        className="modal-balansol"
       >
         <ModalContent />
       </Modal>

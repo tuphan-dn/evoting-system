@@ -1,4 +1,4 @@
-import { Button, Col, Row, Typography } from 'antd'
+import { Col, Row, Typography } from 'antd'
 import CandidateDetail from './candidateDetail'
 import NewCandidateBtn from './newCandidateBtn'
 
