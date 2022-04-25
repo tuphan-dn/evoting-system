@@ -1,25 +1,74 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useCallback, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import {
+  useWalletKit,
+  useSolana,
+  useConnectedWallet
+} from "@gokiprotocol/walletkit";
+
+import { Button, Col, Row } from "antd";
+import WalletInfo from "./components/walletInfo";
+
+import "./App.css";
+import { setWalletInfo, WalletState } from "./store/wallet.reducer";
+import { AppDispatch } from "./store";
+
+import ListCandidates from "./view/listCandidates";
 
 function App() {
+  // Goki hooks
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
+  const { disconnect, providerMut } = useSolana();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const fetchBalance = useCallback(async () => {
+    // TODO: fetch balance
+
+    let walletInfo: WalletState = {
+      walletAddress: wallet?.publicKey.toBase58() || "",
+      balance: 0
+    };
+    if (wallet && providerMut) {
+      walletInfo.balance = await providerMut.connection.getBalance(
+        wallet.publicKey
+      );
+    }
+    dispatch(setWalletInfo(walletInfo));
+  }, [providerMut, wallet]);
+
+
+
+  useEffect(() => {
+    fetchBalance();
+  }, [fetchBalance]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Row justify="center" gutter={[24, 24]}>
+      <Col span={12}>
+        <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <WalletInfo />
+          </Col>
+          {/* Button connect wallet */}
+          <Col span={24} style={{ textAlign: "center" }}>
+            {wallet ? (
+              <Button type="primary" onClick={disconnect}>
+                Disconnect
+              </Button>
+            ) : (
+              // Call connectWallet function when click Button
+              <Button type="primary" onClick={connect}>
+                Connect Wallet
+              </Button>
+            )}
+          </Col>
+          <Col span={24}>
+            <ListCandidates />
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 }
 
