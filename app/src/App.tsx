@@ -5,6 +5,7 @@ import {
   useSolana,
   useConnectedWallet,
 } from '@gokiprotocol/walletkit'
+import * as anchor from '@project-serum/anchor'
 
 import { Button, Col, Row } from 'antd'
 import WalletInfo from './components/walletInfo'
@@ -14,6 +15,7 @@ import { setWalletInfo, WalletState } from './store/wallet.reducer'
 import { AppDispatch } from './store'
 
 import ListCandidates from './view/listCandidates'
+import * as config from './config'
 
 function App() {
   // Goki hooks
@@ -24,7 +26,6 @@ function App() {
 
   const fetchBalance = useCallback(async () => {
     // TODO: fetch balance
-
     let walletInfo: WalletState = {
       walletAddress: wallet?.publicKey.toBase58() || '',
       balance: 0,
@@ -34,8 +35,26 @@ function App() {
         wallet.publicKey,
       )
     }
+    fetchCandidates()
     dispatch(setWalletInfo(walletInfo))
   }, [providerMut, wallet])
+
+  const fetchCandidates = async () => {
+    if (!wallet) return
+    const program = config.getProgram(wallet)
+    const [pda, bump] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from('treasurer'), wallet?.publicKey.toBuffer()],
+      config.programID,
+    )
+
+    try {
+      const candidates = await program.account.candidate.all()
+      console.log(candidates)
+    } catch (error) {
+      console.log(error)
+    } finally {
+    }
+  }
 
   useEffect(() => {
     fetchBalance()
