@@ -18,6 +18,7 @@ const ModalContent = ({
           <Typography.Text>Amount: </Typography.Text>
           <Input
             style={{ width: '100%' }}
+            value={amount}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               onChangeValue(event.target.value)
             }

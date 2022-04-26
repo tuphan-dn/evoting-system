@@ -51,12 +51,20 @@ function App() {
           {/* Button connect wallet */}
           <Col span={24} style={{ textAlign: 'center' }}>
             {wallet ? (
-              <Button type="primary" onClick={disconnect}>
+              <Button
+                type="primary"
+                style={{ borderRadius: 40 }}
+                onClick={disconnect}
+              >
                 Disconnect
               </Button>
             ) : (
               // Call connectWallet function when click Button
-              <Button type="primary" onClick={connect}>
+              <Button
+                type="primary"
+                style={{ borderRadius: 40 }}
+                onClick={connect}
+              >
                 Connect Wallet
               </Button>
             )}

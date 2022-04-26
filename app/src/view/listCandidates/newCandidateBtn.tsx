@@ -1,44 +1,17 @@
-import {
-  Button,
-  Card,
-  Col,
-  DatePicker,
-  Form,
-  Modal,
-  Row,
-  Space,
-  Typography,
-} from 'antd'
+import { Button, Col, DatePicker, Modal, Row, Space, Typography } from 'antd'
 import { Fragment, useState } from 'react'
 import { UserAddOutlined } from '@ant-design/icons'
 import moment from 'moment'
 
-const dateFormat = 'DD/MM/YYYY'
-
-const ModalContent = () => {
-  return (
-    <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-      <Form.Item label="Start Date">
-        <DatePicker style={{ width: '80%' }} format={dateFormat} />
-      </Form.Item>
-
-      <Form.Item label="End Date">
-        <DatePicker style={{ width: '80%' }} format={dateFormat} />
-      </Form.Item>
-
-      <Form.Item>
-        <Col style={{ textAlign: 'right' }}>
-          <Button type="primary">Create Candidate</Button>
-        </Col>
-      </Form.Item>
-    </Form>
-  )
-}
-
 const NewCandidateBtn = () => {
   const [visible, setVisible] = useState(false)
-  const [dateStart, setDateStart] = useState('')
-  const [dateEnd, setDateEnd] = useState('')
+  const [startDate, setStartDate] = useState<moment.Moment>()
+  const [endDate, setEndDate] = useState<moment.Moment>()
+
+  const onCreateCandidate = () => {
+    //todo
+    console.log(startDate, endDate)
+  }
 
   return (
     <Fragment>
@@ -60,7 +33,36 @@ const NewCandidateBtn = () => {
         destroyOnClose={true}
         centered={true}
       >
-        <ModalContent />
+        <Row gutter={[8, 8]}>
+          <Col span={24}>
+            <Typography.Text>Voting Time Duration</Typography.Text>
+          </Col>
+          <Col span={24}>
+            <Space>
+              <DatePicker
+                placeholder="Start Date"
+                value={startDate ? moment(startDate) : null}
+                showTime
+                onChange={(date) => setStartDate(moment(date))}
+              />
+              <DatePicker
+                placeholder="End Date"
+                value={endDate ? moment(endDate) : null}
+                showTime
+                onChange={(date) => setEndDate(moment(date))}
+              />
+            </Space>
+          </Col>
+          <Col span={24} style={{ textAlign: 'right' }}>
+            <Button
+              type="primary"
+              style={{ borderRadius: 40 }}
+              onClick={onCreateCandidate}
+            >
+              Create Candidate
+            </Button>
+          </Col>
+        </Row>
       </Modal>
     </Fragment>
   )
