@@ -8,6 +8,7 @@
     "@reduxjs/toolkit": "^1.7.2",
     "@saberhq/use-solana": "^1.12.48",
     "@solana/buffer-layout": "^4.0.0",
+    "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "^1.39.1",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",

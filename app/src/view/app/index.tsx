@@ -7,12 +7,12 @@ import {
 } from '@gokiprotocol/walletkit'
 
 import { Button, Col, Row, Space } from 'antd'
-import WalletInfo from './components/walletInfo'
-import './App.css'
-import { setWalletInfo, WalletState } from './store/wallet.reducer'
-import { AppDispatch } from './store'
-import ListCandidates from './view/listCandidates'
-import { viewAllTokenOwner } from './utils/helper'
+import WalletInfo from 'components/walletInfo'
+import ListCandidates from 'view/listCandidates'
+
+import { setWalletInfo, WalletState } from 'store/wallet.reducer'
+import { AppDispatch } from 'store'
+import { viewAllTokenOwner } from 'utils/helper'
 
 function App() {
   // Goki hooks
