@@ -1,16 +1,81 @@
-import { Button, Col, DatePicker, Modal, Row, Space, Typography } from 'antd'
+import {
+  Button,
+  Col,
+  DatePicker,
+  Modal,
+  Row,
+  Space,
+  Typography,
+  Input,
+} from 'antd'
 import { Fragment, useState } from 'react'
 import { UserAddOutlined } from '@ant-design/icons'
 import moment from 'moment'
 
+import { useConnectedWallet } from '@gokiprotocol/walletkit'
+import * as config from '../../config'
+import * as anchor from '@project-serum/anchor'
+
 const NewCandidateBtn = () => {
   const [visible, setVisible] = useState(false)
+  const wallet = useConnectedWallet()
   const [startDate, setStartDate] = useState<moment.Moment>()
   const [endDate, setEndDate] = useState<moment.Moment>()
+  const [mintToken, setMintToken] = useState('')
 
-  const onCreateCandidate = () => {
+  const onCreateCandidate = async () => {
     //todo
-    console.log(startDate, endDate)
+
+    if (!wallet || !startDate || !endDate!) return
+    const startTime = moment(startDate).valueOf()
+    const endTime = moment(endDate).valueOf()
+
+    console.log(moment(startDate).valueOf(), endDate)
+
+    const program = config.getProgram(wallet)
+
+    const candidate = new anchor.web3.Keypair()
+    let treasurer: anchor.web3.PublicKey
+
+    const [treasurerPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from('treasurer'), wallet?.publicKey.toBuffer()],
+      config.programID,
+    )
+    treasurer = treasurerPublicKey
+
+    // Derive token account
+    let walletTokenAccount = await anchor.utils.token.associatedAddress({
+      mint: new anchor.web3.PublicKey(mintToken),
+      owner: wallet.publicKey,
+    })
+    let candidateTokenAccount = await anchor.utils.token.associatedAddress({
+      mint: new anchor.web3.PublicKey(mintToken),
+      owner: treasurerPublicKey,
+    })
+
+    try {
+      await program.rpc.initializeCandidate(
+        new anchor.BN(startTime),
+        new anchor.BN(endTime),
+        {
+          accounts: {
+            authority: wallet.publicKey,
+            candidate: candidate.publicKey,
+            treasurer,
+            mint: new anchor.web3.PublicKey(mintToken),
+            candidateTokenAccount,
+            tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+            associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+            systemProgram: anchor.web3.SystemProgram.programId,
+            rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+          },
+          signers: [candidate],
+        },
+      )
+    } catch (error) {
+      console.log(error)
+    } finally {
+    }
   }
 
   return (
@@ -26,14 +91,20 @@ const NewCandidateBtn = () => {
       <Modal
         title={<Typography.Title level={4}>New Candidate</Typography.Title>}
         visible={visible}
-        onCancel={() => {
-          setVisible(false)
-        }}
+        onCancel={() => setVisible(false)}
         footer={null}
         destroyOnClose={true}
         centered={true}
       >
         <Row gutter={[8, 8]}>
+          <Col span={24}>
+            <Typography.Text>Voting Mint Token: </Typography.Text>
+          </Col>
+          <Col span={24}>
+            <Input
+              onChange={(event) => setMintToken(event.target.value)}
+            ></Input>
+          </Col>
           <Col span={24}>
             <Typography.Text>Voting Time Duration</Typography.Text>
           </Col>
@@ -41,14 +112,16 @@ const NewCandidateBtn = () => {
             <Space>
               <DatePicker
                 placeholder="Start Date"
-                value={startDate ? moment(startDate) : null}
+                value={startDate}
                 showTime
+                allowClear={false}
                 onChange={(date) => setStartDate(moment(date))}
               />
               <DatePicker
                 placeholder="End Date"
-                value={endDate ? moment(endDate) : null}
+                value={endDate}
                 showTime
+                allowClear={false}
                 onChange={(date) => setEndDate(moment(date))}
               />
             </Space>

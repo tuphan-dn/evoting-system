@@ -7,7 +7,7 @@ import {
 } from '@gokiprotocol/walletkit'
 import * as anchor from '@project-serum/anchor'
 
-import { Button, Col, Row } from 'antd'
+import { Button, Col, Row, Space } from 'antd'
 import WalletInfo from './components/walletInfo'
 
 import './App.css'
@@ -16,6 +16,7 @@ import { AppDispatch } from './store'
 
 import ListCandidates from './view/listCandidates'
 import * as config from './config'
+import { viewAllTokenOwner } from './utils/helper'
 
 function App() {
   // Goki hooks
@@ -49,11 +50,16 @@ function App() {
 
     try {
       const candidates = await program.account.candidate.all()
-      console.log(candidates)
+      console.log('candidates: ', candidates)
     } catch (error) {
       console.log(error)
     } finally {
     }
+  }
+
+  const createMintToken = async () => {
+    if (!wallet) return
+    viewAllTokenOwner(wallet.publicKey.toBase58())
   }
 
   useEffect(() => {
@@ -70,13 +76,22 @@ function App() {
           {/* Button connect wallet */}
           <Col span={24} style={{ textAlign: 'center' }}>
             {wallet ? (
-              <Button
-                type="primary"
-                style={{ borderRadius: 40 }}
-                onClick={disconnect}
-              >
-                Disconnect
-              </Button>
+              <Space>
+                <Button
+                  type="primary"
+                  style={{ borderRadius: 40 }}
+                  onClick={disconnect}
+                >
+                  Disconnect
+                </Button>
+                <Button
+                  type="primary"
+                  style={{ borderRadius: 40 }}
+                  onClick={createMintToken}
+                >
+                  View token owner
+                </Button>
+              </Space>
             ) : (
               // Call connectWallet function when click Button
               <Button
