@@ -1,4 +1,5 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useConnectedWallet } from '@gokiprotocol/walletkit'
 
 import { Col, Row } from 'antd'
 import CandidateDetail from './candidateDetail'
@@ -12,7 +13,7 @@ const ListCandidates = () => {
     <Row gutter={[24, 24]}>
       {Object.keys(candidates).map((address) => {
         return (
-          <Col span={24} key={address}>
+          <Col span={12} key={address}>
             <CandidateDetail candidateAddress={address} />
           </Col>
         )

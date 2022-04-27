@@ -7,6 +7,8 @@ import * as anchor from '@project-serum/anchor'
 import { useSelector } from 'react-redux'
 import { AppState } from 'store'
 import { getProgram, PROGRAM_ADDRESS } from 'config'
+import { useDispatch } from 'react-redux'
+import { setCandidate } from 'store/candidates.reducer'
 
 const ModalContent = ({
   amount,
@@ -47,7 +49,9 @@ const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
   const {
     candidates: { [candidateAddress]: candidateData },
   } = useSelector((state: AppState) => state)
+  const dispatch = useDispatch()
   const [visible, setVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [amount, setAmount] = useState('')
   const wallet = useConnectedWallet()
 
@@ -76,6 +80,7 @@ const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
     })
 
     try {
+      setLoading(true)
       await program.rpc.vote(new anchor.BN(amount), {
         accounts: {
           authority: wallet.publicKey,
@@ -92,23 +97,25 @@ const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
         },
         signers: [],
       })
-      notification.success({ message: 'Vote candidate success' })
+      notification.success({ message: 'Vote success' })
+      setVisible(false)
+      dispatch(setCandidate({ ...candidateData, amount: candidateData.amount + Number(amount) }))
     } catch (error: any) {
-      notification.error({ message: error })
+      notification.error({ message: 'Vote failed' })
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <Fragment>
-      <Button onClick={() => setVisible(true)} style={{ borderRadius: 40 }} block>
+      <Button onClick={() => setVisible(true)} style={{ borderRadius: 40 }} block loading={loading}>
         Vote
       </Button>
       <Modal
         title={<Typography.Title level={4}>Vote Candidate</Typography.Title>}
         visible={visible}
-        onCancel={() => {
-          setVisible(false)
-        }}
+        onCancel={() => setVisible(false)}
         footer={null}
         destroyOnClose={true}
         centered={true}

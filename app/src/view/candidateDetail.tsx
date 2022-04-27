@@ -8,6 +8,7 @@ import VoteBtn from './voteBtn'
 import { getProgram } from 'config'
 import { useSelector } from 'react-redux'
 import { AppState } from 'store'
+import { useState } from 'react'
 
 const dateFormat = 'DD/MM/YYYY hh:mm:ss'
 
@@ -16,6 +17,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
     candidates: { [candidateAddress]: candidateData },
   } = useSelector((state: AppState) => state)
   const wallet = useConnectedWallet()
+  const [loading, setLoading] = useState(false)
 
   const onClose = async () => {
     if (!wallet) return
@@ -42,6 +44,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
     })
 
     try {
+      setLoading(true)
       await program.rpc.close({
         accounts: {
           authority: wallet.publicKey,
@@ -49,10 +52,8 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
           treasurer,
           mint: candidateData.mint,
           candidateTokenAccount,
-
           ballot,
           voterTokenAccount: walletTokenAccount,
-
           tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
           associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
           systemProgram: anchor.web3.SystemProgram.programId,
@@ -60,9 +61,11 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
         },
         signers: [],
       })
-      notification.success({ message: 'Close candidate success' })
+      notification.success({ message: 'Close success' })
     } catch (error: any) {
-      notification.error({ message: error })
+      notification.error({ message: 'Close failed' })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -98,7 +101,12 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
             <Col>
               <Space>
                 <VoteBtn candidateAddress={candidateAddress} />
-                <Button type="primary" style={{ borderRadius: 40 }} onClick={onClose}>
+                <Button
+                  type="primary"
+                  style={{ borderRadius: 40 }}
+                  onClick={onClose}
+                  loading={loading}
+                >
                   Close
                 </Button>
               </Space>

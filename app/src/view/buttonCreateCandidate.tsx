@@ -10,8 +10,9 @@ import * as config from '../config'
 import { useDispatch } from 'react-redux'
 import { setCandidate } from 'store/candidates.reducer'
 
-const NewCandidateBtn = () => {
+const ButtonCreateCandidate = () => {
   const [visible, setVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [startDate, setStartDate] = useState<moment.Moment>()
   const [endDate, setEndDate] = useState<moment.Moment>()
   const [mintAddress, setMintAddress] = useState('')
@@ -39,6 +40,7 @@ const NewCandidateBtn = () => {
     })
 
     try {
+      setLoading(true)
       await program.rpc.initializeCandidate(new anchor.BN(startTime), new anchor.BN(endTime), {
         accounts: {
           authority: wallet.publicKey,
@@ -64,8 +66,11 @@ const NewCandidateBtn = () => {
         }),
       )
       notification.success({ message: 'Create candidate successfully!' })
+      setVisible(false)
     } catch (error: any) {
       notification.error({ message: error.message })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -76,6 +81,7 @@ const NewCandidateBtn = () => {
         onClick={() => setVisible(true)}
         style={{ borderRadius: 40 }}
         block
+        loading={loading}
       >
         New candidate
       </Button>
@@ -126,4 +132,4 @@ const NewCandidateBtn = () => {
   )
 }
 
-export default NewCandidateBtn
+export default ButtonCreateCandidate

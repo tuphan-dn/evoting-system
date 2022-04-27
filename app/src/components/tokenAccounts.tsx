@@ -52,7 +52,7 @@ const TokenAccounts = () => {
           dataSource={tokenAccounts}
           columns={COLUMNS}
           rowKey="mint"
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 3 }}
         />
       </Col>
     </Row>
