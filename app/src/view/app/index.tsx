@@ -5,7 +5,7 @@ import { useWalletKit, useSolana, useConnectedWallet } from '@gokiprotocol/walle
 import { Button, Col, Layout, Row, Typography } from 'antd'
 import ListCandidates from 'view/listCandidates'
 import CandidateCreate from 'view/candidateCreate'
-import TokenAccounts from 'components/tokenAccounts'
+import TokenAccounts from 'view/tokenAccounts'
 
 import { setWalletInfo, WalletState } from 'store/wallet.reducer'
 import { AppDispatch } from 'store'
