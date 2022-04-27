@@ -103,7 +103,7 @@ const CandidateCreate = () => {
           <Col span={24}>
             <Typography.Text>Voting Time Duration</Typography.Text>
           </Col>
-          <Col span={24}>
+          <Col span={24} style={{ textAlign: 'center' }}>
             <Space>
               <DatePicker
                 placeholder="Start Date"
@@ -122,7 +122,7 @@ const CandidateCreate = () => {
             </Space>
           </Col>
           <Col span={24} style={{ textAlign: 'right' }}>
-            <Button type="primary" style={{ borderRadius: 40 }} onClick={onCreateCandidate}>
+            <Button type="primary" style={{ borderRadius: 40 }} onClick={onCreateCandidate} block>
               Create Candidate
             </Button>
           </Col>

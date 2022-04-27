@@ -98,18 +98,23 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
                 </Col>
               </Row>
             </Col>
-            <Col>
-              <Space>
-                <CandidateVote candidateAddress={candidateAddress} />
-                <Button
-                  type="primary"
-                  style={{ borderRadius: 40 }}
-                  onClick={onClose}
-                  loading={loading}
-                >
-                  Close
-                </Button>
-              </Space>
+          </Row>
+        </Col>
+        <Col span={24}>
+          <Row gutter={24}>
+            <Col span={12}>
+              <CandidateVote candidateAddress={candidateAddress} />
+            </Col>
+            <Col span={12}>
+              <Button
+                type="primary"
+                style={{ borderRadius: 40 }}
+                onClick={onClose}
+                loading={loading}
+                block
+              >
+                Close
+              </Button>
             </Col>
           </Row>
         </Col>
