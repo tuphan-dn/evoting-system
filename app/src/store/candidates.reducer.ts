@@ -9,12 +9,13 @@ export const candidateSlice = createSlice({
   name: 'candidates',
   initialState,
   reducers: {
-    setCandidates: (state, action: PayloadAction<CandidatesState>) => {
-      return action.payload
+    setCandidate: (state, action: PayloadAction<CandidateData>) => {
+      state[action.payload.address] = action.payload
+      return state
     },
   },
 })
 
-export const { setCandidates } = candidateSlice.actions
+export const { setCandidate } = candidateSlice.actions
 
 export default candidateSlice.reducer

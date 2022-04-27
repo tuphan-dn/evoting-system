@@ -10,7 +10,13 @@ export const PROGRAM_ADDRESS = new anchor.web3.PublicKey(
 )
 export const NODE_URL = clusterApiUrl(DEFAULT_CLUSTER)
 
-export type CandidateData = IdlAccounts<L6>['candidate']
+export type CandidateData = {
+  address: string
+  mint: string
+  amount: number
+  startTime: number
+  endTime: number
+}
 
 // Function support
 export const getProvider = (wallet: any) => {

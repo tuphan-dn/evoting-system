@@ -1,13 +1,4 @@
-import {
-  Button,
-  Col,
-  Input,
-  Modal,
-  notification,
-  Row,
-  Space,
-  Typography,
-} from 'antd'
+import { Button, Col, Input, Modal, notification, Row, Space, Typography } from 'antd'
 import { ChangeEvent, Fragment, useState } from 'react'
 
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
@@ -64,6 +55,7 @@ const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
     if (!wallet) return
     const program = getProgram(wallet)
     const candidatePublicKey = new anchor.web3.PublicKey(candidateAddress)
+    const mintPublicKey = new anchor.web3.PublicKey(candidateData.mint)
 
     const [treasurer] = await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from('treasurer'), candidatePublicKey.toBuffer()],
@@ -75,11 +67,11 @@ const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
     )
     // Derive token account
     let walletTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: candidateData.mint,
+      mint: mintPublicKey,
       owner: wallet.publicKey,
     })
     let candidateTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: candidateData.mint,
+      mint: mintPublicKey,
       owner: treasurer,
     })
 

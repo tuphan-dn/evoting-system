@@ -21,6 +21,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
     if (!wallet) return
     const program = getProgram(wallet)
     const candidatePublicKey = new anchor.web3.PublicKey(candidateAddress)
+    const mintPublicKey = new anchor.web3.PublicKey(candidateData.mint)
 
     const [treasurer] = await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from('treasurer'), candidatePublicKey.toBuffer()],
@@ -32,11 +33,11 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
     )
     // Derive token account
     let walletTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: candidateData.mint,
+      mint: mintPublicKey,
       owner: wallet.publicKey,
     })
     let candidateTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: candidateData.mint,
+      mint: mintPublicKey,
       owner: treasurer,
     })
 
@@ -69,7 +70,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
     <Card>
       <Row style={{ marginBottom: '16px' }}>
         <Col flex="auto">Candidate: {candidateAddress}</Col>
-        <Col>Vote amount: {candidateData.amount.toNumber()}</Col>
+        <Col>Vote amount: {candidateData.amount}</Col>
       </Row>
       <Row gutter={[0, 10]}>
         <Col span={24}>
@@ -80,8 +81,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
                   <Space align="baseline">
                     <Typography.Text>Start date:</Typography.Text>
                     <Typography.Title level={5}>
-                      {' '}
-                      {moment(candidateData.startDate.toNumber() * 1000).format(dateFormat)}
+                      {moment(candidateData.startTime * 1000).format(dateFormat)}
                     </Typography.Title>
                   </Space>
                 </Col>
@@ -89,8 +89,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
                   <Space align="baseline">
                     <Typography.Text>End date:</Typography.Text>
                     <Typography.Title level={5}>
-                      {' '}
-                      {moment(candidateData.endDate.toNumber() * 1000).format(dateFormat)}
+                      {moment(candidateData.endTime * 1000).format(dateFormat)}
                     </Typography.Title>
                   </Space>
                 </Col>

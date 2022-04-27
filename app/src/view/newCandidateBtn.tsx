@@ -7,13 +7,15 @@ import { Button, Col, DatePicker, Modal, Row, Space, Typography, Input, notifica
 import { UserAddOutlined } from '@ant-design/icons'
 
 import * as config from '../config'
+import { useDispatch } from 'react-redux'
+import { setCandidate } from 'store/candidates.reducer'
 
 const NewCandidateBtn = () => {
   const [visible, setVisible] = useState(false)
   const [startDate, setStartDate] = useState<moment.Moment>()
   const [endDate, setEndDate] = useState<moment.Moment>()
   const [mintAddress, setMintAddress] = useState('')
-
+  const dispatch = useDispatch()
   const wallet = useConnectedWallet()
 
   const onCreateCandidate = async () => {
@@ -51,9 +53,19 @@ const NewCandidateBtn = () => {
         },
         signers: [candidate],
       })
-    } catch (error) {
-      console.log(error)
-    } finally {
+
+      dispatch(
+        setCandidate({
+          address: candidate.publicKey.toBase58(),
+          amount: 0,
+          mint: mintAddress,
+          startTime,
+          endTime,
+        }),
+      )
+      notification.success({ message: 'Create candidate successfully!' })
+    } catch (error: any) {
+      notification.error({ message: error.message })
     }
   }
 
