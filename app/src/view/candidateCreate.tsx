@@ -95,13 +95,13 @@ const CandidateCreate = () => {
       >
         <Row gutter={[8, 8]}>
           <Col span={24}>
-            <Typography.Text>Voting Mint Token: </Typography.Text>
+            <Typography.Text type="secondary">Voting Mint Token: </Typography.Text>
           </Col>
           <Col span={24}>
             <Input onChange={(event) => setMintAddress(event.target.value)}></Input>
           </Col>
           <Col span={24}>
-            <Typography.Text>Voting Time Duration</Typography.Text>
+            <Typography.Text type="secondary">Voting Time Duration:</Typography.Text>
           </Col>
           <Col span={24} style={{ textAlign: 'center' }}>
             <Space>

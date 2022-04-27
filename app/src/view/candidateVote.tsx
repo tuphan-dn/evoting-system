@@ -84,22 +84,29 @@ const CandidateVote = ({ candidateAddress }: { candidateAddress: string }) => {
         destroyOnClose={true}
         centered={true}
       >
-        <Row gutter={[24, 24]}>
+        <Row gutter={[24, 12]}>
           <Col span={24}>
-            <Typography.Text>Candidate: {candidateAddress}</Typography.Text>
+            <Typography.Text type="secondary">Candidate: </Typography.Text>
           </Col>
           <Col span={24}>
-            <Space>
-              <Typography.Text>Amount: </Typography.Text>
-              <Input
-                style={{ width: '100%' }}
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </Space>
+            <Typography.Text>{candidateAddress}</Typography.Text>
           </Col>
-          <Col span={24} style={{ textAlign: 'right' }}>
-            <Button type="primary" onClick={() => onVote()} loading={loading}>
+          <Col span={24}>
+            <Typography.Text type="secondary">Amount: </Typography.Text>
+            <Input
+              style={{ width: '100%' }}
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </Col>
+          <Col span={24}>
+            <Button
+              type="primary"
+              style={{ borderRadius: 40 }}
+              onClick={() => onVote()}
+              loading={loading}
+              block
+            >
               Vote Candidate
             </Button>
           </Col>
