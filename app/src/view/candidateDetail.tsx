@@ -1,16 +1,16 @@
-import * as anchor from '@project-serum/anchor'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import moment from 'moment'
+import { useConnectedWallet } from '@gokiprotocol/walletkit'
+import * as anchor from '@project-serum/anchor'
 
 import { Button, Card, Col, Row, Space, Typography, notification } from 'antd'
+import CandidateVote from './candidateVote'
 
-import { useConnectedWallet } from '@gokiprotocol/walletkit'
-import VoteBtn from './voteBtn'
 import { getProgram } from 'config'
-import { useSelector } from 'react-redux'
 import { AppState } from 'store'
-import { useState } from 'react'
 
-const dateFormat = 'DD/MM/YYYY hh:mm:ss'
+const DATE_FORMAT = 'DD/MM/YYYY hh:mm:ss'
 
 const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => {
   const {
@@ -84,7 +84,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
                   <Space align="baseline">
                     <Typography.Text>Start date:</Typography.Text>
                     <Typography.Title level={5}>
-                      {moment(candidateData.startTime * 1000).format(dateFormat)}
+                      {moment(candidateData.startTime * 1000).format(DATE_FORMAT)}
                     </Typography.Title>
                   </Space>
                 </Col>
@@ -92,7 +92,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
                   <Space align="baseline">
                     <Typography.Text>End date:</Typography.Text>
                     <Typography.Title level={5}>
-                      {moment(candidateData.endTime * 1000).format(dateFormat)}
+                      {moment(candidateData.endTime * 1000).format(DATE_FORMAT)}
                     </Typography.Title>
                   </Space>
                 </Col>
@@ -100,7 +100,7 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
             </Col>
             <Col>
               <Space>
-                <VoteBtn candidateAddress={candidateAddress} />
+                <CandidateVote candidateAddress={candidateAddress} />
                 <Button
                   type="primary"
                   style={{ borderRadius: 40 }}

@@ -9,7 +9,7 @@ import { AppState } from 'store'
 import { getProgram } from 'config'
 import { setCandidate } from 'store/candidates.reducer'
 
-const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
+const CandidateVote = ({ candidateAddress }: { candidateAddress: string }) => {
   const {
     candidates: { [candidateAddress]: candidateData },
   } = useSelector((state: AppState) => state)
@@ -109,4 +109,4 @@ const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
   )
 }
 
-export default VoteBtn
+export default CandidateVote

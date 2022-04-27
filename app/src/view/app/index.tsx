@@ -4,11 +4,11 @@ import { useWalletKit, useSolana, useConnectedWallet } from '@gokiprotocol/walle
 
 import { Button, Col, Layout, Row, Typography } from 'antd'
 import ListCandidates from 'view/listCandidates'
+import CandidateCreate from 'view/candidateCreate'
+import TokenAccounts from 'components/tokenAccounts'
 
 import { setWalletInfo, WalletState } from 'store/wallet.reducer'
 import { AppDispatch } from 'store'
-import ButtonCreateCandidate from 'view/buttonCreateCandidate'
-import TokenAccounts from 'components/tokenAccounts'
 
 const { Header, Content } = Layout
 
@@ -59,7 +59,7 @@ function App() {
                 <Typography.Title>List Candidates</Typography.Title>
               </Col>
               <Col>
-                <ButtonCreateCandidate />
+                <CandidateCreate />
               </Col>
             </Row>
           </Col>

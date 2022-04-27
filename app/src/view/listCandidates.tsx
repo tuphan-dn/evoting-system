@@ -1,5 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { useConnectedWallet } from '@gokiprotocol/walletkit'
+import { useSelector } from 'react-redux'
 
 import { Col, Row } from 'antd'
 import CandidateDetail from './candidateDetail'

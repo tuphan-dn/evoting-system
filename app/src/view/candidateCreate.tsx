@@ -1,16 +1,16 @@
 import { Fragment, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
+import moment from 'moment'
 import * as anchor from '@project-serum/anchor'
 
-import moment from 'moment'
 import { Button, Col, DatePicker, Modal, Row, Space, Typography, Input, notification } from 'antd'
 import { UserAddOutlined } from '@ant-design/icons'
 
-import * as config from '../config'
-import { useDispatch } from 'react-redux'
 import { setCandidate } from 'store/candidates.reducer'
+import { getProgram } from '../config'
 
-const ButtonCreateCandidate = () => {
+const CandidateCreate = () => {
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [startDate, setStartDate] = useState<moment.Moment>()
@@ -21,7 +21,7 @@ const ButtonCreateCandidate = () => {
 
   const onCreateCandidate = async () => {
     if (!wallet || !startDate || !endDate) return
-    const program = config.getProgram(wallet)
+    const program = getProgram(wallet)
     const startTime = startDate.valueOf() / 1000
     const endTime = endDate.valueOf() / 1000
 
@@ -30,7 +30,7 @@ const ButtonCreateCandidate = () => {
 
     const [treasurerPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from('treasurer'), candidate.publicKey.toBuffer()],
-      config.PROGRAM_ADDRESS,
+      program.programId,
     )
     treasurer = treasurerPublicKey
 
@@ -132,4 +132,4 @@ const ButtonCreateCandidate = () => {
   )
 }
 
-export default ButtonCreateCandidate
+export default CandidateCreate
