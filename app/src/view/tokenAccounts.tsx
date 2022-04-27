@@ -12,11 +12,11 @@ type TokenAccountData = {
 
 const COLUMNS = [
   {
-    title: 'mint',
+    title: 'Mint Address',
     dataIndex: 'mint',
   },
   {
-    title: 'amount',
+    title: 'Amount (Lamports)',
     dataIndex: 'amount',
   },
 ]
