@@ -1,49 +1,13 @@
-import { Button, Col, Input, Modal, notification, Row, Space, Typography } from 'antd'
-import { ChangeEvent, Fragment, useState } from 'react'
-
+import { useSelector, useDispatch } from 'react-redux'
+import { Fragment, useState } from 'react'
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
-
 import * as anchor from '@project-serum/anchor'
-import { useSelector } from 'react-redux'
-import { AppState } from 'store'
-import { getProgram, PROGRAM_ADDRESS } from 'config'
-import { useDispatch } from 'react-redux'
-import { setCandidate } from 'store/candidates.reducer'
 
-const ModalContent = ({
-  amount,
-  onChangeValue = () => {},
-  onVoteCandidate = () => {},
-  candidateAddress,
-}: {
-  amount: number | string
-  onChangeValue?: (value: string) => void
-  onVoteCandidate: () => void
-  candidateAddress: string
-}) => {
-  return (
-    <Row gutter={[24, 24]}>
-      <Col span={24}>
-        <Typography.Text>Candidate: {candidateAddress}</Typography.Text>
-      </Col>
-      <Col span={24}>
-        <Space>
-          <Typography.Text>Amount: </Typography.Text>
-          <Input
-            style={{ width: '100%' }}
-            value={amount}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => onChangeValue(event.target.value)}
-          />
-        </Space>
-      </Col>
-      <Col span={24} style={{ textAlign: 'right' }}>
-        <Button type="primary" onClick={onVoteCandidate}>
-          Vote Candidate
-        </Button>
-      </Col>
-    </Row>
-  )
-}
+import { Button, Col, Input, Modal, notification, Row, Space, Typography } from 'antd'
+
+import { AppState } from 'store'
+import { getProgram } from 'config'
+import { setCandidate } from 'store/candidates.reducer'
 
 const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
   const {
@@ -120,12 +84,26 @@ const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
         destroyOnClose={true}
         centered={true}
       >
-        <ModalContent
-          amount={amount}
-          onChangeValue={(amount) => setAmount(amount)}
-          onVoteCandidate={onVote}
-          candidateAddress={candidateAddress}
-        />
+        <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <Typography.Text>Candidate: {candidateAddress}</Typography.Text>
+          </Col>
+          <Col span={24}>
+            <Space>
+              <Typography.Text>Amount: </Typography.Text>
+              <Input
+                style={{ width: '100%' }}
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </Space>
+          </Col>
+          <Col span={24} style={{ textAlign: 'right' }}>
+            <Button type="primary" onClick={() => onVote()} loading={loading}>
+              Vote Candidate
+            </Button>
+          </Col>
+        </Row>
       </Modal>
     </Fragment>
   )
