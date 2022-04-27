@@ -7,6 +7,7 @@ import {
   Space,
   Typography,
   Input,
+  notification,
 } from 'antd'
 import { Fragment, useState } from 'react'
 import { UserAddOutlined } from '@ant-design/icons'
@@ -28,10 +29,8 @@ const NewCandidateBtn = () => {
     console.log('programID: ', config.programID)
 
     if (!wallet || !startDate || !endDate!) return
-    const startTime =  startDate.valueOf()/1000
-    const endTime = endDate.valueOf()/1000
-
-
+    const startTime = startDate.valueOf() / 1000
+    const endTime = endDate.valueOf() / 1000
 
     const program = config.getProgram(wallet)
 
@@ -73,9 +72,9 @@ const NewCandidateBtn = () => {
           signers: [candidate],
         },
       )
-    } catch (error) {
-      console.log(error)
-    } finally {
+      notification.success({ message: 'New candidate success' })
+    } catch (error: any) {
+      notification.error({ message: error })
     }
   }
 

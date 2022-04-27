@@ -1,4 +1,13 @@
-import { Button, Col, Input, Modal, Row, Space, Typography } from 'antd'
+import {
+  Button,
+  Col,
+  Input,
+  Modal,
+  notification,
+  Row,
+  Space,
+  Typography,
+} from 'antd'
 import { ChangeEvent, Fragment, useState } from 'react'
 import { Candidate } from './index'
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
@@ -71,13 +80,10 @@ const VoteBtn = ({ candidate }: { candidate: Candidate }) => {
     ballot = ballotPublicKey
 
     // Derive token account
-    console.log("candidate.mint",candidate.mint);
-    console.log("wallet.publicKey",wallet.publicKey);
     let walletTokenAccount = await anchor.utils.token.associatedAddress({
       mint: candidate.mint,
       owner: wallet.publicKey,
     })
-    console.log('walletTokenAccount: ', walletTokenAccount)
     let candidateTokenAccount = await anchor.utils.token.associatedAddress({
       mint: candidate.mint,
       owner: treasurerPublicKey,
@@ -102,8 +108,9 @@ const VoteBtn = ({ candidate }: { candidate: Candidate }) => {
         },
         signers: [],
       })
-    } catch (error) {
-      console.log(error)
+      notification.success({ message: 'Vote candidate success' })
+    } catch (error: any) {
+      notification.error({ message: error })
     }
   }
 

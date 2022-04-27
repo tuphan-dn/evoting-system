@@ -1,11 +1,12 @@
-import { Button, Card, Col, Row, Space, Typography } from 'antd'
-import { Candidate } from './index'
-import VoteBtn from './voteBtn'
+import * as anchor from '@project-serum/anchor'
 import moment from 'moment'
 
+import { Button, Card, Col, Row, Space, Typography, notification } from 'antd'
+
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
+import { Candidate } from './index'
+import VoteBtn from './voteBtn'
 import * as config from '../../config'
-import * as anchor from '@project-serum/anchor'
 
 const dateFormat = 'DD/MM/YYYY hh:mm:ss'
 
@@ -36,13 +37,10 @@ const CandidateDetail = ({ candidate }: { candidate: Candidate }) => {
     ballot = ballotPublicKey
 
     // Derive token account
-    console.log('candidate.mint', candidate.mint)
-    console.log('wallet.publicKey', wallet.publicKey)
     let walletTokenAccount = await anchor.utils.token.associatedAddress({
       mint: candidate.mint,
       owner: wallet.publicKey,
     })
-    console.log('walletTokenAccount: ', walletTokenAccount)
     let candidateTokenAccount = await anchor.utils.token.associatedAddress({
       mint: candidate.mint,
       owner: treasurerPublicKey,
@@ -67,8 +65,9 @@ const CandidateDetail = ({ candidate }: { candidate: Candidate }) => {
         },
         signers: [],
       })
-    } catch (error) {
-      console.log(error)
+      notification.success({ message: 'Close candidate success' })
+    } catch (error: any) {
+      notification.error({ message: error })
     }
   }
   return (

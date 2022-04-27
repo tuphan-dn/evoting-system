@@ -5,17 +5,13 @@ import {
   useSolana,
   useConnectedWallet,
 } from '@gokiprotocol/walletkit'
-import * as anchor from '@project-serum/anchor'
 
 import { Button, Col, Row, Space } from 'antd'
 import WalletInfo from './components/walletInfo'
-
 import './App.css'
 import { setWalletInfo, WalletState } from './store/wallet.reducer'
 import { AppDispatch } from './store'
-
 import ListCandidates from './view/listCandidates'
-import * as config from './config'
 import { viewAllTokenOwner } from './utils/helper'
 
 function App() {

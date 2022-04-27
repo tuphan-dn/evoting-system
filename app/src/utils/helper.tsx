@@ -1,6 +1,5 @@
-import { ConnectedWallet } from '@saberhq/use-solana'
-import { AccountLayout, createMint, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { Connection, Keypair, PublicKey } from '@solana/web3.js'
+import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { Connection, PublicKey } from '@solana/web3.js'
 import * as config from '../config'
 
 const connection = new Connection(config.network, 'confirmed')
