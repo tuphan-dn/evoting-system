@@ -9,10 +9,13 @@ import {
   Typography,
 } from 'antd'
 import { ChangeEvent, Fragment, useState } from 'react'
-import { Candidate } from './index'
+
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
-import * as config from '../../config'
+
 import * as anchor from '@project-serum/anchor'
+import { useSelector } from 'react-redux'
+import { AppState } from 'store'
+import { getProgram, PROGRAM_ADDRESS } from 'config'
 
 const ModalContent = ({
   amount,
@@ -36,9 +39,7 @@ const ModalContent = ({
           <Input
             style={{ width: '100%' }}
             value={amount}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              onChangeValue(event.target.value)
-            }
+            onChange={(event: ChangeEvent<HTMLInputElement>) => onChangeValue(event.target.value)}
           />
         </Space>
       </Col>
@@ -51,56 +52,47 @@ const ModalContent = ({
   )
 }
 
-const VoteBtn = ({ candidate }: { candidate: Candidate }) => {
+const VoteBtn = ({ candidateAddress }: { candidateAddress: string }) => {
+  const {
+    candidates: { [candidateAddress]: candidateData },
+  } = useSelector((state: AppState) => state)
   const [visible, setVisible] = useState(false)
   const [amount, setAmount] = useState('')
   const wallet = useConnectedWallet()
 
   const onVote = async () => {
     if (!wallet) return
+    const program = getProgram(wallet)
+    const candidatePublicKey = new anchor.web3.PublicKey(candidateAddress)
 
-    const program = config.getProgram(wallet)
-    let treasurer: anchor.web3.PublicKey
-    let ballot: anchor.web3.PublicKey
-
-    const [treasurerPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
-      [Buffer.from('treasurer'), candidate.candidateAddress.toBuffer()],
-      config.programID,
-    )
-    treasurer = treasurerPublicKey
-
-    const [ballotPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from('ballot'),
-        candidate.candidateAddress.toBuffer(),
-        wallet.publicKey.toBuffer(),
-      ],
+    const [treasurer] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from('treasurer'), candidatePublicKey.toBuffer()],
       program.programId,
     )
-    ballot = ballotPublicKey
-
+    const [ballot] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from('ballot'), candidatePublicKey.toBuffer(), wallet.publicKey.toBuffer()],
+      program.programId,
+    )
     // Derive token account
     let walletTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: candidate.mint,
+      mint: candidateData.mint,
       owner: wallet.publicKey,
     })
     let candidateTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: candidate.mint,
-      owner: treasurerPublicKey,
+      mint: candidateData.mint,
+      owner: treasurer,
     })
 
     try {
       await program.rpc.vote(new anchor.BN(amount), {
         accounts: {
           authority: wallet.publicKey,
-          candidate: candidate.candidateAddress,
+          candidate: candidatePublicKey,
           treasurer,
-          mint: candidate.mint,
+          mint: candidateData.mint,
           candidateTokenAccount,
-
           ballot,
           voterTokenAccount: walletTokenAccount,
-
           tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
           associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
           systemProgram: anchor.web3.SystemProgram.programId,
@@ -116,11 +108,7 @@ const VoteBtn = ({ candidate }: { candidate: Candidate }) => {
 
   return (
     <Fragment>
-      <Button
-        onClick={() => setVisible(true)}
-        style={{ borderRadius: 40 }}
-        block
-      >
+      <Button onClick={() => setVisible(true)} style={{ borderRadius: 40 }} block>
         Vote
       </Button>
       <Modal
@@ -137,7 +125,7 @@ const VoteBtn = ({ candidate }: { candidate: Candidate }) => {
           amount={amount}
           onChangeValue={(amount) => setAmount(amount)}
           onVoteCandidate={onVote}
-          candidateAddress={candidate.candidateAddress.toBase58()}
+          candidateAddress={candidateAddress}
         />
       </Modal>
     </Fragment>

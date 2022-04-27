@@ -1,10 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import {
-  useWalletKit,
-  useSolana,
-  useConnectedWallet,
-} from '@gokiprotocol/walletkit'
+import { useWalletKit, useSolana, useConnectedWallet } from '@gokiprotocol/walletkit'
 
 import { Button, Col, Row, Space } from 'antd'
 import WalletInfo from 'components/walletInfo'
@@ -12,37 +8,27 @@ import ListCandidates from 'view/listCandidates'
 
 import { setWalletInfo, WalletState } from 'store/wallet.reducer'
 import { AppDispatch } from 'store'
-import { viewAllTokenOwner } from 'utils/helper'
 
 function App() {
-  // Goki hooks
+  const dispatch = useDispatch<AppDispatch>()
   const wallet = useConnectedWallet()
   const { connect } = useWalletKit()
   const { disconnect, providerMut } = useSolana()
-  const dispatch = useDispatch<AppDispatch>()
 
-  const fetchBalance = useCallback(async () => {
-    // TODO: fetch balance
+  const fetchWalletInfo = useCallback(async () => {
+    if (!wallet || !providerMut) return
+    // TODO: fetch SOL balance
+    const lamports = await providerMut.connection.getBalance(wallet.publicKey)
     let walletInfo: WalletState = {
-      walletAddress: wallet?.publicKey.toBase58() || '',
-      balance: 0,
-    }
-    if (wallet && providerMut) {
-      walletInfo.balance = await providerMut.connection.getBalance(
-        wallet.publicKey,
-      )
+      walletAddress: wallet.publicKey.toBase58(),
+      balance: lamports,
     }
     dispatch(setWalletInfo(walletInfo))
   }, [providerMut, wallet])
 
-  const viewAllToken = async () => {
-    if (!wallet) return
-    viewAllTokenOwner(wallet.publicKey.toBase58())
-  }
-
   useEffect(() => {
-    fetchBalance()
-  }, [fetchBalance])
+    fetchWalletInfo()
+  }, [fetchWalletInfo])
 
   return (
     <Row justify="center" gutter={[24, 24]}>
@@ -55,28 +41,13 @@ function App() {
           <Col span={24} style={{ textAlign: 'center' }}>
             {wallet ? (
               <Space>
-                <Button
-                  type="primary"
-                  style={{ borderRadius: 40 }}
-                  onClick={disconnect}
-                >
+                <Button type="primary" style={{ borderRadius: 40 }} onClick={disconnect}>
                   Disconnect
-                </Button>
-                <Button
-                  type="primary"
-                  style={{ borderRadius: 40 }}
-                  onClick={viewAllToken}
-                >
-                  View token owner
                 </Button>
               </Space>
             ) : (
               // Call connectWallet function when click Button
-              <Button
-                type="primary"
-                style={{ borderRadius: 40 }}
-                onClick={connect}
-              >
+              <Button type="primary" style={{ borderRadius: 40 }} onClick={connect}>
                 Connect Wallet
               </Button>
             )}

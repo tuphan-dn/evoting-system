@@ -4,55 +4,49 @@ import moment from 'moment'
 import { Button, Card, Col, Row, Space, Typography, notification } from 'antd'
 
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
-import { Candidate } from './index'
 import VoteBtn from './voteBtn'
-import * as config from '../../config'
+import { getProgram } from 'config'
+import { useSelector } from 'react-redux'
+import { AppState } from 'store'
 
 const dateFormat = 'DD/MM/YYYY hh:mm:ss'
 
-const CandidateDetail = ({ candidate }: { candidate: Candidate }) => {
+const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => {
+  const {
+    candidates: { [candidateAddress]: candidateData },
+  } = useSelector((state: AppState) => state)
   const wallet = useConnectedWallet()
 
   const onClose = async () => {
     if (!wallet) return
+    const program = getProgram(wallet)
+    const candidatePublicKey = new anchor.web3.PublicKey(candidateAddress)
 
-    const program = config.getProgram(wallet)
-    let treasurer: anchor.web3.PublicKey
-    let ballot: anchor.web3.PublicKey
-
-    const [treasurerPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
-      [Buffer.from('treasurer'), candidate.candidateAddress.toBuffer()],
-      config.programID,
-    )
-    treasurer = treasurerPublicKey
-
-    const [ballotPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from('ballot'),
-        candidate.candidateAddress.toBuffer(),
-        wallet.publicKey.toBuffer(),
-      ],
+    const [treasurer] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from('treasurer'), candidatePublicKey.toBuffer()],
       program.programId,
     )
-    ballot = ballotPublicKey
-
+    const [ballot] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from('ballot'), candidatePublicKey.toBuffer(), wallet.publicKey.toBuffer()],
+      program.programId,
+    )
     // Derive token account
     let walletTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: candidate.mint,
+      mint: candidateData.mint,
       owner: wallet.publicKey,
     })
     let candidateTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: candidate.mint,
-      owner: treasurerPublicKey,
+      mint: candidateData.mint,
+      owner: treasurer,
     })
 
     try {
       await program.rpc.close({
         accounts: {
           authority: wallet.publicKey,
-          candidate: candidate.candidateAddress,
+          candidate: candidatePublicKey,
           treasurer,
-          mint: candidate.mint,
+          mint: candidateData.mint,
           candidateTokenAccount,
 
           ballot,
@@ -70,13 +64,12 @@ const CandidateDetail = ({ candidate }: { candidate: Candidate }) => {
       notification.error({ message: error })
     }
   }
+
   return (
-    <Card style={{ boxShadow: 'unset' }}>
+    <Card>
       <Row style={{ marginBottom: '16px' }}>
-        <Col flex="auto">
-          Candidate: {candidate.candidateAddress.toBase58()}
-        </Col>
-        <Col>Vote amount: {Number(candidate.amount)}</Col>
+        <Col flex="auto">Candidate: {candidateAddress}</Col>
+        <Col>Vote amount: {candidateData.amount.toNumber()}</Col>
       </Row>
       <Row gutter={[0, 10]}>
         <Col span={24}>
@@ -88,9 +81,7 @@ const CandidateDetail = ({ candidate }: { candidate: Candidate }) => {
                     <Typography.Text>Start date:</Typography.Text>
                     <Typography.Title level={5}>
                       {' '}
-                      {moment(Number(candidate.startDate) * 1000).format(
-                        dateFormat,
-                      )}
+                      {moment(candidateData.startDate.toNumber() * 1000).format(dateFormat)}
                     </Typography.Title>
                   </Space>
                 </Col>
@@ -99,9 +90,7 @@ const CandidateDetail = ({ candidate }: { candidate: Candidate }) => {
                     <Typography.Text>End date:</Typography.Text>
                     <Typography.Title level={5}>
                       {' '}
-                      {moment(Number(candidate.endDate) * 1000).format(
-                        dateFormat,
-                      )}
+                      {moment(candidateData.endDate.toNumber() * 1000).format(dateFormat)}
                     </Typography.Title>
                   </Space>
                 </Col>
@@ -109,12 +98,8 @@ const CandidateDetail = ({ candidate }: { candidate: Candidate }) => {
             </Col>
             <Col>
               <Space>
-                <VoteBtn candidate={candidate} />
-                <Button
-                  type="primary"
-                  style={{ borderRadius: 40 }}
-                  onClick={onClose}
-                >
+                <VoteBtn candidateAddress={candidateAddress} />
+                <Button type="primary" style={{ borderRadius: 40 }} onClick={onClose}>
                   Close
                 </Button>
               </Space>

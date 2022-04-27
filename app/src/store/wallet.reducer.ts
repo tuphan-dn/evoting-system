@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface WalletState {
+
+export type WalletState ={
   walletAddress: string;
   balance: number;
 }

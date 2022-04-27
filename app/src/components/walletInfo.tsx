@@ -1,11 +1,15 @@
-import { Card, Col, Row } from 'antd'
 import { useSelector } from 'react-redux'
+
+import { Card, Col, Row } from 'antd'
+import TokenAccounts from './tokenAccounts'
+
 import { AppState } from '../store'
 
 const WalletInfo = () => {
   const {
     wallet: { walletAddress, balance },
   } = useSelector((state: AppState) => state)
+
   return (
     <Card title="Wallet Info">
       <Row gutter={[24, 24]}>
@@ -22,6 +26,10 @@ const WalletInfo = () => {
             <Col>Balance:</Col>
             <Col>{balance}</Col>
           </Row>
+        </Col>
+        {/* Token Account */}
+        <Col span={24}>
+          <TokenAccounts />
         </Col>
       </Row>
     </Card>
