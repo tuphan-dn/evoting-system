@@ -25,9 +25,6 @@ const NewCandidateBtn = () => {
   const [mintToken, setMintToken] = useState('')
 
   const onCreateCandidate = async () => {
-    //todo
-    console.log('programID: ', config.programID)
-
     if (!wallet || !startDate || !endDate!) return
     const startTime = startDate.valueOf() / 1000
     const endTime = endDate.valueOf() / 1000
@@ -43,11 +40,6 @@ const NewCandidateBtn = () => {
     )
     treasurer = treasurerPublicKey
 
-    // Derive token account
-    let walletTokenAccount = await anchor.utils.token.associatedAddress({
-      mint: new anchor.web3.PublicKey(mintToken),
-      owner: wallet.publicKey,
-    })
     let candidateTokenAccount = await anchor.utils.token.associatedAddress({
       mint: new anchor.web3.PublicKey(mintToken),
       owner: treasurerPublicKey,
@@ -72,7 +64,7 @@ const NewCandidateBtn = () => {
           signers: [candidate],
         },
       )
-      notification.success({ message: 'New candidate success' })
+      notification.success({ message: 'Create new candidate success' })
     } catch (error: any) {
       notification.error({ message: error })
     }
