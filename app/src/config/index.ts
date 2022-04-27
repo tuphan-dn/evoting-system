@@ -1,7 +1,7 @@
 import * as anchor from '@project-serum/anchor'
-import { IdlAccounts } from '@project-serum/anchor'
 import { clusterApiUrl } from '@solana/web3.js'
-import { L6, IDL } from './idl'
+
+import { IDL } from './idl'
 
 export const DEFAULT_COMMITMENT = 'confirmed'
 export const DEFAULT_CLUSTER = 'devnet'
@@ -28,6 +28,5 @@ export const getProvider = (wallet: any) => {
 
 export const getProgram = (wallet: any) => {
   const provider = getProvider(wallet)
-  anchor.setProvider(provider)
-  return new anchor.Program(IDL, PROGRAM_ADDRESS)
+  return new anchor.Program(IDL, PROGRAM_ADDRESS, provider)
 }
