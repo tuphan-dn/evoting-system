@@ -36,28 +36,10 @@ function App() {
         wallet.publicKey,
       )
     }
-    fetchCandidates()
     dispatch(setWalletInfo(walletInfo))
   }, [providerMut, wallet])
 
-  const fetchCandidates = async () => {
-    if (!wallet) return
-    const program = config.getProgram(wallet)
-    const [pda, bump] = await anchor.web3.PublicKey.findProgramAddress(
-      [Buffer.from('treasurer'), wallet?.publicKey.toBuffer()],
-      config.programID,
-    )
-
-    try {
-      const candidates = await program.account.candidate.all()
-      console.log('candidates: ', candidates)
-    } catch (error) {
-      console.log(error)
-    } finally {
-    }
-  }
-
-  const createMintToken = async () => {
+  const viewAllToken = async () => {
     if (!wallet) return
     viewAllTokenOwner(wallet.publicKey.toBase58())
   }
@@ -87,7 +69,7 @@ function App() {
                 <Button
                   type="primary"
                   style={{ borderRadius: 40 }}
-                  onClick={createMintToken}
+                  onClick={viewAllToken}
                 >
                   View token owner
                 </Button>

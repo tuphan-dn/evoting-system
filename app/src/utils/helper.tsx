@@ -20,17 +20,3 @@ export const viewAllTokenOwner = async (ownerAddress: string) => {
     console.log(`${new PublicKey(accountInfo.mint)}   ${accountInfo.amount}`)
   })
 }
-
-// export const createMintToken = async (wallet: ConnectedWallet) => {
-//   const payer = Keypair.generate()
-//   const mintAuthority = Keypair.generate()
-//   const freezeAuthority = Keypair.generate()
-//   const mint = await createMint(
-//     connection,
-//     wallet,
-//     mintAuthority.publicKey,
-//     freezeAuthority.publicKey,
-//     9, // We are using 9 to match the CLI decimal default exactly
-//   )
-//   console.log(createMintToken, mint.toBase58())
-// }

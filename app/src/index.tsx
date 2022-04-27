@@ -10,7 +10,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <WalletKitProvider
-        defaultNetwork="localnet"
+        defaultNetwork="devnet"
         app={{
           name: "My App"
         }}

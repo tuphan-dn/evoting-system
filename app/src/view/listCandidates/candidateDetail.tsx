@@ -1,12 +1,83 @@
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
+import { Candidate } from './index'
 import VoteBtn from './voteBtn'
+import moment from 'moment'
 
-const CandidateDetail = () => {
+import { useConnectedWallet } from '@gokiprotocol/walletkit'
+import * as config from '../../config'
+import * as anchor from '@project-serum/anchor'
+
+const dateFormat = 'DD/MM/YYYY hh:mm:ss'
+
+const CandidateDetail = ({ candidate }: { candidate: Candidate }) => {
+  const wallet = useConnectedWallet()
+
+  const onClose = async () => {
+    if (!wallet) return
+
+    const program = config.getProgram(wallet)
+    let treasurer: anchor.web3.PublicKey
+    let ballot: anchor.web3.PublicKey
+
+    const [treasurerPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
+      [Buffer.from('treasurer'), candidate.candidateAddress.toBuffer()],
+      config.programID,
+    )
+    treasurer = treasurerPublicKey
+
+    const [ballotPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from('ballot'),
+        candidate.candidateAddress.toBuffer(),
+        wallet.publicKey.toBuffer(),
+      ],
+      program.programId,
+    )
+    ballot = ballotPublicKey
+
+    // Derive token account
+    console.log('candidate.mint', candidate.mint)
+    console.log('wallet.publicKey', wallet.publicKey)
+    let walletTokenAccount = await anchor.utils.token.associatedAddress({
+      mint: candidate.mint,
+      owner: wallet.publicKey,
+    })
+    console.log('walletTokenAccount: ', walletTokenAccount)
+    let candidateTokenAccount = await anchor.utils.token.associatedAddress({
+      mint: candidate.mint,
+      owner: treasurerPublicKey,
+    })
+
+    try {
+      await program.rpc.close({
+        accounts: {
+          authority: wallet.publicKey,
+          candidate: candidate.candidateAddress,
+          treasurer,
+          mint: candidate.mint,
+          candidateTokenAccount,
+
+          ballot,
+          voterTokenAccount: walletTokenAccount,
+
+          tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+          associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+          systemProgram: anchor.web3.SystemProgram.programId,
+          rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        },
+        signers: [],
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <Card style={{ boxShadow: 'unset' }}>
       <Row style={{ marginBottom: '16px' }}>
-        <Col flex="auto">Candidate: ABCXYZ</Col>
-        <Col>Vote amount: 123</Col>
+        <Col flex="auto">
+          Candidate: {candidate.candidateAddress.toBase58()}
+        </Col>
+        <Col>Vote amount: {Number(candidate.amount)}</Col>
       </Row>
       <Row gutter={[0, 10]}>
         <Col span={24}>
@@ -16,21 +87,35 @@ const CandidateDetail = () => {
                 <Col span={24}>
                   <Space align="baseline">
                     <Typography.Text>Start date:</Typography.Text>
-                    <Typography.Title level={5}> 05/20/2022</Typography.Title>
+                    <Typography.Title level={5}>
+                      {' '}
+                      {moment(Number(candidate.startDate) * 1000).format(
+                        dateFormat,
+                      )}
+                    </Typography.Title>
                   </Space>
                 </Col>
                 <Col span={24}>
                   <Space align="baseline">
                     <Typography.Text>End date:</Typography.Text>
-                    <Typography.Title level={5}> 05/20/2022</Typography.Title>
+                    <Typography.Title level={5}>
+                      {' '}
+                      {moment(Number(candidate.endDate) * 1000).format(
+                        dateFormat,
+                      )}
+                    </Typography.Title>
                   </Space>
                 </Col>
               </Row>
             </Col>
             <Col>
               <Space>
-                <VoteBtn />
-                <Button type="primary" style={{ borderRadius: 40 }}>
+                <VoteBtn candidate={candidate} />
+                <Button
+                  type="primary"
+                  style={{ borderRadius: 40 }}
+                  onClick={onClose}
+                >
                   Close
                 </Button>
               </Space>

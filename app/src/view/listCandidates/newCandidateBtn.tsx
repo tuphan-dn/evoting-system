@@ -25,12 +25,13 @@ const NewCandidateBtn = () => {
 
   const onCreateCandidate = async () => {
     //todo
+    console.log('programID: ', config.programID)
 
     if (!wallet || !startDate || !endDate!) return
-    const startTime = moment(startDate).valueOf()
-    const endTime = moment(endDate).valueOf()
+    const startTime =  startDate.valueOf()/1000
+    const endTime = endDate.valueOf()/1000
 
-    console.log(moment(startDate).valueOf(), endDate)
+
 
     const program = config.getProgram(wallet)
 
@@ -38,7 +39,7 @@ const NewCandidateBtn = () => {
     let treasurer: anchor.web3.PublicKey
 
     const [treasurerPublicKey] = await anchor.web3.PublicKey.findProgramAddress(
-      [Buffer.from('treasurer'), wallet?.publicKey.toBuffer()],
+      [Buffer.from('treasurer'), candidate.publicKey.toBuffer()],
       config.programID,
     )
     treasurer = treasurerPublicKey
