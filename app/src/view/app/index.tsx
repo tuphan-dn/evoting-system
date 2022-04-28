@@ -2,24 +2,21 @@ import { useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useWalletKit, useSolana, useConnectedWallet } from '@gokiprotocol/walletkit'
 
-import { Button, Col, Layout, Row, Typography } from 'antd'
+import { Button, Col, Layout, Row, Space, Typography } from 'antd'
 import ListCandidates from 'view/listCandidates'
-import CandidateCreate from 'view/candidateCreate'
+import CreateCandidate from 'view/createCandidate'
 
 import { setWalletInfo, WalletState } from 'store/wallet.reducer'
 import { AppDispatch } from 'store'
-
-const { Header, Content } = Layout
 
 function App() {
   const dispatch = useDispatch<AppDispatch>()
   const wallet = useConnectedWallet()
   const { connect } = useWalletKit()
-  const { providerMut } = useSolana()
+  const { disconnect, providerMut } = useSolana()
 
   const fetchWalletInfo = useCallback(async () => {
     if (!wallet || !providerMut) return
-    // TODO: fetch SOL balance
     const lamports = await providerMut.connection.getBalance(wallet.publicKey)
     let walletInfo: WalletState = {
       walletAddress: wallet.publicKey.toBase58(),
@@ -34,28 +31,33 @@ function App() {
 
   return (
     <Layout style={{ height: '100vh' }}>
-      <Header>
+      <Layout.Header>
         <Col span={24}>
           {wallet ? (
-            <Col span={24} style={{ color: 'white' }}>
-              {wallet.publicKey.toBase58()}
-            </Col>
+            <Space>
+              <Button type="primary" onClick={disconnect}>
+                Disconnect
+              </Button>
+              <Typography.Text style={{ color: 'white' }}>
+                {wallet.publicKey.toBase58()}
+              </Typography.Text>
+            </Space>
           ) : (
-            <Button type="primary" style={{ borderRadius: 40 }} onClick={connect}>
+            <Button type="primary" onClick={connect}>
               Connect Wallet
             </Button>
           )}
         </Col>
-      </Header>
-      <Content style={{ padding: 40 }}>
+      </Layout.Header>
+      <Layout.Content style={{ padding: 40 }}>
         <Row gutter={[24, 24]}>
           <Col span={24}>
             <Row gutter={[24, 24]}>
               <Col flex="auto">
-                <Typography.Title>List Candidates</Typography.Title>
+                <Typography.Title>List of Candidates</Typography.Title>
               </Col>
               <Col>
-                <CandidateCreate />
+                <CreateCandidate />
               </Col>
             </Row>
           </Col>
@@ -63,7 +65,7 @@ function App() {
             <ListCandidates />
           </Col>
         </Row>
-      </Content>
+      </Layout.Content>
     </Layout>
   )
 }

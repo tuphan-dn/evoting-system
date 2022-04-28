@@ -3,13 +3,13 @@ import { Fragment, useState } from 'react'
 import { useConnectedWallet } from '@gokiprotocol/walletkit'
 import * as anchor from '@project-serum/anchor'
 
-import { Button, Col, Input, Modal, notification, Row, Space, Typography } from 'antd'
+import { Button, Col, Input, Modal, notification, Row, Typography } from 'antd'
 
 import { AppState } from 'store'
 import { getProgram } from 'config'
 import { setCandidate } from 'store/candidates.reducer'
 
-const CandidateVote = ({ candidateAddress }: { candidateAddress: string }) => {
+const VoteCandidate = ({ candidateAddress }: { candidateAddress: string }) => {
   const {
     candidates: { [candidateAddress]: candidateData },
   } = useSelector((state: AppState) => state)
@@ -73,7 +73,7 @@ const CandidateVote = ({ candidateAddress }: { candidateAddress: string }) => {
 
   return (
     <Fragment>
-      <Button onClick={() => setVisible(true)} style={{ borderRadius: 40 }} block loading={loading}>
+      <Button type="primary" onClick={() => setVisible(true)} block loading={loading}>
         Vote
       </Button>
       <Modal
@@ -100,13 +100,7 @@ const CandidateVote = ({ candidateAddress }: { candidateAddress: string }) => {
             />
           </Col>
           <Col span={24}>
-            <Button
-              type="primary"
-              style={{ borderRadius: 40 }}
-              onClick={() => onVote()}
-              loading={loading}
-              block
-            >
+            <Button type="primary" onClick={() => onVote()} loading={loading} block>
               Vote Candidate
             </Button>
           </Col>
@@ -116,4 +110,4 @@ const CandidateVote = ({ candidateAddress }: { candidateAddress: string }) => {
   )
 }
 
-export default CandidateVote
+export default VoteCandidate
