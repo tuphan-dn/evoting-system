@@ -61,13 +61,13 @@ const VoteCandidate = ({ candidateAddress }: { candidateAddress: string }) => {
         },
         signers: [],
       })
-      notification.success({ message: 'Vote success' })
       setVisible(false)
       dispatch(setCandidate({ ...candidateData, amount: candidateData.amount + Number(amount) }))
-    } catch (error: any) {
-      notification.error({ message: 'Vote failed' })
+      return notification.success({ message: 'Voted for the candidate' })
+    } catch (er: any) {
+      return notification.error({ message: er.message })
     } finally {
-      setLoading(false)
+      return setLoading(false)
     }
   }
 

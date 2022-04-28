@@ -62,8 +62,8 @@ const CandidateDetail = ({ candidateAddress }: { candidateAddress: string }) => 
         signers: [],
       })
       return notification.success({ message: 'Closed the vote' })
-    } catch (error: any) {
-      return notification.error({ message: 'Failed to close' })
+    } catch (er: any) {
+      return notification.error({ message: er.message })
     } finally {
       return setLoading(false)
     }

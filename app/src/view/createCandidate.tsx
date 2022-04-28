@@ -65,12 +65,12 @@ const CreateCandidate = () => {
           endTime,
         }),
       )
-      notification.success({ message: 'Create candidate successfully!' })
       setVisible(false)
-    } catch (error: any) {
-      notification.error({ message: error.message })
+      return notification.success({ message: 'Created a candidate' })
+    } catch (er: any) {
+      return notification.error({ message: er.message })
     } finally {
-      setLoading(false)
+      return setLoading(false)
     }
   }
 
