@@ -1,14 +1,14 @@
 [features]
 seeds = false
 [programs.localnet]
-l6 = "HCoUastFpW7wB9Ue4o4YHy27VTuiJEo7h9hKmhnXDQhD"
+l6 = "FovnXa6fTHiskU1jU6XBFUkuMzWBMr8FUGQRuDWh6Yfq"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
 cluster = "devnet"
-wallet = "/Users/descartesnetworkdev/my-solana-wallet/my-keypair.json"
+wallet = "/Users/tuphan/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
