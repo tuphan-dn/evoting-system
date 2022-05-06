@@ -47,7 +47,7 @@ pub fn exec(ctx: Context<Close>) -> Result<()> {
   let ballot = &mut ctx.accounts.ballot;
 
   let now = Clock::get().unwrap().unix_timestamp;
-  if now < candidate.end_date {
+  if now > candidate.end_date {
     return err!(ErrorCode::EndedCandidate);
   }
 
@@ -62,7 +62,7 @@ pub fn exec(ctx: Context<Close>) -> Result<()> {
     token::Transfer {
       from: ctx.accounts.candidate_token_account.to_account_info(),
       to: ctx.accounts.voter_token_account.to_account_info(),
-      authority: ctx.accounts.authority.to_account_info(),
+      authority: ctx.accounts.treasurer.to_account_info(),
     },
     seeds,
   );
