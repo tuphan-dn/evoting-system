@@ -4,6 +4,6 @@ use anchor_lang::prelude::*;
 pub enum ErrorCode {
   #[msg("The candidate isn't active")]
   NotActiveCandidate,
-  #[msg("The candidate is ended")]
-  EndedCandidate,
+  #[msg("The candidate isn't ended")]
+  NotEndedCandidate,
 }

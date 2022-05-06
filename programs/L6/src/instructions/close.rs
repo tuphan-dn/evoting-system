@@ -47,8 +47,8 @@ pub fn exec(ctx: Context<Close>) -> Result<()> {
   let ballot = &mut ctx.accounts.ballot;
 
   let now = Clock::get().unwrap().unix_timestamp;
-  if now > candidate.end_date {
-    return err!(ErrorCode::EndedCandidate);
+  if now < candidate.end_date {
+    return err!(ErrorCode::NotEndedCandidate);
   }
 
   let seeds: &[&[&[u8]]] = &[&[
