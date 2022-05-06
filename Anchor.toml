@@ -1,6 +1,6 @@
 [features]
 seeds = false
-[programs.localnet]
+[programs.devnet]
 l6 = "FovnXa6fTHiskU1jU6XBFUkuMzWBMr8FUGQRuDWh6Yfq"
 
 [registry]
